@@ -18,27 +18,35 @@ import { MessageService } from './services/message.service';
   ],
   providers: [MessageService],
   template: `
-    <div class="messages-layout">
+    <div class="messages-layout grid h-[94vh] gap-3 dark:bg-gray-900">
       <!-- LEFT: Conversation List -->
-      <aside class="sidebar">
-        <div class="sidebar-header">
-          <h2>Messages</h2>
+      <aside
+        class="sidebar flex flex-col h-full bg-gray-900 border-r border-gray-700 rounded-lg shadow-md"
+      >
+        <div class="sidebar-header p-4 border-b border-gray-700 flex-shrink-0">
+          <h2 class="text-gray-100 text-lg font-semibold">Messages</h2>
           <input
             type="text"
             [formControl]="searchFormControl"
             placeholder="Search"
-            class="search-input"
+            class="search-input mt-2 w-full px-3 py-2 rounded-md bg-gray-800 border border-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
           />
         </div>
 
-        <app-conversation-list [searchText]="this.searchFormControl.value"> </app-conversation-list>
+        <div class="flex-1 overflow-y-auto">
+          <app-conversation-list [searchText]="searchFormControl.value"></app-conversation-list>
+        </div>
       </aside>
 
       <!-- CENTER: Chat Window -->
-      <app-chat-window></app-chat-window>
+      <app-chat-window
+        class="h-full rounded-lg shadow-md overflow-hidden bg-gray-800"
+      ></app-chat-window>
 
       <!-- RIGHT: Patient Info -->
-      <app-info-panel></app-info-panel>
+      <app-info-panel
+        class="h-full rounded-lg shadow-md overflow-y-auto bg-gray-800"
+      ></app-info-panel>
     </div>
   `,
   styles: [
@@ -46,31 +54,18 @@ import { MessageService } from './services/message.service';
       /* MAIN LAYOUT */
       .messages-layout {
         display: grid;
-        grid-template-columns: 300px 1fr 300px;
-        height: 100%;
-        background: #f3f4f6;
+        grid-template-columns: 280px 1fr 320px;
       }
 
-      /* SIDEBAR */
-      .sidebar {
-        background: #ffffff;
-        border-right: 1px solid #e5e7eb;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
+      /* SCROLLBARS */
+      .sidebar,
+      app-info-panel {
+        overflow-y: auto;
       }
 
-      .sidebar-header {
-        padding: 12px;
-        border-bottom: 1px solid #e5e7eb;
-      }
-
-      .search-input {
-        width: 100%;
-        padding: 6px 8px;
-        margin-top: 8px;
-        border: 1px solid #d1d5db;
-        border-radius: 4px;
+      /* Smooth scrolling for chat messages */
+      app-chat-window ::ng-deep .chat-messages {
+        scroll-behavior: smooth;
       }
     `,
   ],
