@@ -1,30 +1,31 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-spinner',
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div
-      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 pointer-events-auto"
-    >
-      <div
-        [ngClass]="{
-          'w-6 h-6 border-4': size === 'small',
-          'w-10 h-10 border-8': size === 'medium',
-          'w-16 h-16 border-12': size === 'large'
-        }"
-        class="spinner"
-        [style.borderTopColor]="color"
-        [style.borderRightColor]="bgColor"
-        [style.borderBottomColor]="bgColor"
-        [style.borderLeftColor]="bgColor"
-      ></div>
+    <div *ngIf="visible" class="spinner-overlay">
+      <div class="spinner" [ngStyle]="spinnerStyle"></div>
     </div>
   `,
   styles: [
     `
+      .spinner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* dark semi-transparent overlay */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        pointer-events: all; /* block interaction with parent */
+      }
+
       .spinner {
         border-radius: 50%;
         border-style: solid;
@@ -32,10 +33,10 @@ import { Component, Input } from '@angular/core';
       }
 
       @keyframes spin {
-        0% {
+        from {
           transform: rotate(0deg);
         }
-        100% {
+        to {
           transform: rotate(360deg);
         }
       }
@@ -45,6 +46,36 @@ import { Component, Input } from '@angular/core';
 export class SpinnerComponent {
   @Input() size: 'small' | 'medium' | 'large' = 'medium';
   @Input() color: string = '#22c55e'; // spinning part
-  @Input() bgColor: string = '#374151'; // dark background for rest of spinner
-  @Input() visible: boolean = true; // toggle spinner visibility
+  @Input() bgColor: string = '#ccc'; // other parts of border
+  @Input() visible: boolean = true;
+
+  get spinnerStyle() {
+    let sizePx: string;
+    let borderWidth: string;
+
+    switch (this.size) {
+      case 'small':
+        sizePx = '24px';
+        borderWidth = '4px';
+        break;
+      case 'medium':
+        sizePx = '40px';
+        borderWidth = '6px';
+        break;
+      case 'large':
+        sizePx = '64px';
+        borderWidth = '8px';
+        break;
+    }
+
+    return {
+      width: sizePx,
+      height: sizePx,
+      borderWidth: borderWidth,
+      borderTopColor: this.color,
+      borderRightColor: this.bgColor,
+      borderBottomColor: this.bgColor,
+      borderLeftColor: this.bgColor,
+    };
+  }
 }

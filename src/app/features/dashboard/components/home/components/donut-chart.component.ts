@@ -1,32 +1,70 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LeadData } from '../models/dashboard.model';
 import { Chart } from 'chart.js/auto';
+import { SpinnerComponent } from '../../../../../shared/components/app-spinner.copmonent';
 
 @Component({
   selector: 'app-donut-chart',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, SpinnerComponent],
   template: `
-    <div class="bg-gray-800 p-4 rounded-lg shadow h-64 w-full flex flex-col">
-      <h3 class="text-white text-lg mb-2">{{ title }}</h3>
-      <div class="flex-1 min-h-0">
-        <canvas [id]="chartId"></canvas>
+    <div class="chart-parent-contaner">
+      <!-- Spinner overlay -->
+      <app-spinner [visible]="loading" size="medium"></app-spinner>
+
+      <!-- Chart container -->
+      <div class="chart-contaner" [style.opacity]="loading ? 0.5 : 1">
+        <h3 class="title">{{ title }}</h3>
+        <canvas #canvas style="height: calc(100% - 40px); width: 100%;"></canvas>
       </div>
     </div>
   `,
+  styles: [
+    `
+      .chart-parent-contaner {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .chart-contaner {
+        width: 100%;
+        height: 100%;
+        background-color: #1f2937;
+        padding: 16px;
+        box-sizing: border-box;
+        padding-bottom: 40px;
+      }
+
+      .title {
+        color: white;
+        margin-bottom: 8px;
+      }
+    `,
+  ],
 })
-export class DonutChartComponent {
+export class DonutChartComponent implements AfterViewInit {
   @Input() data: LeadData[] = [];
   @Input() title: string = '';
-  chartId = 'donut' + Math.random().toString(36).substring(2, 15);
+  @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
 
-  ngAfterViewInit() {
-    if (!this.data.length) return;
-    this.renderChart();
+  loading: boolean = true;
+
+  ngAfterViewInit(): void {
+    // Simulate async data fetch
+    setTimeout(() => {
+      this.loading = false;
+      if (this.data && this.data.length) {
+        this.renderChart();
+      }
+    }, 1000); // adjust delay as needed
   }
 
-  renderChart() {
-    const ctx = (document.getElementById(this.chartId) as HTMLCanvasElement).getContext('2d');
+  private renderChart() {
+    const ctx = this.canvas.nativeElement.getContext('2d');
     if (!ctx) return;
 
     new Chart(ctx, {
@@ -42,13 +80,11 @@ export class DonutChartComponent {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false, // ← THIS is key
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             position: 'bottom',
-            labels: {
-              color: 'white',
-            },
+            labels: { color: 'white' },
           },
         },
       },

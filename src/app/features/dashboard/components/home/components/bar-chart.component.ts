@@ -5,37 +5,76 @@ import {
   OnChanges,
   SimpleChanges,
   OnDestroy,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration } from 'chart.js/auto';
 import { WebLeadData } from '../models/dashboard.model';
+import { SpinnerComponent } from '../../../../../shared/components/app-spinner.copmonent';
 
 @Component({
   selector: 'app-bar-chart',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SpinnerComponent],
   template: `
-    <div class="bg-gray-800 p-4 rounded-lg shadow h-64 w-full flex flex-col">
-      <h3 class="text-white text-lg mb-2">{{ title }}</h3>
-      <div class="flex-1 min-h-0">
-        <canvas [id]="chartId"></canvas>
+    <div class="chart-parent-container">
+      <!-- Spinner overlay -->
+      <app-spinner [visible]="loading" size="medium"></app-spinner>
+
+      <!-- Chart container -->
+      <div class="chart-container" [style.opacity]="loading ? 0.5 : 1">
+        <h3 class="title">{{ title }}</h3>
+        <canvas #canvas style="height: calc(100% - 40px); width: 100%;"></canvas>
       </div>
     </div>
   `,
+  styles: [
+    `
+      .chart-parent-container {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .chart-container {
+        width: 100%;
+        height: 100%;
+        background-color: #1f2937;
+        padding: 16px;
+        box-sizing: border-box;
+        padding-bottom: 40px; /* space for legend */
+      }
+
+      .title {
+        color: white;
+        margin-bottom: 8px;
+      }
+    `,
+  ],
 })
 export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() data: WebLeadData[] = [];
   @Input() title: string = '';
+  @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
 
-  chartId = 'bar-' + Math.random().toString(36).substring(2, 15);
-  private chart: Chart | null = null;
+  chart: Chart | null = null;
+  loading: boolean = true;
 
   ngAfterViewInit() {
-    this.renderChart();
+    // simulate async data load
+    setTimeout(() => {
+      this.loading = false;
+      if (this.data && this.data.length) {
+        this.renderChart();
+      }
+    }, 1000);
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'] && !changes['data'].firstChange) {
+    if (!changes['data'].firstChange) {
       this.renderChart();
     }
   }
@@ -46,11 +85,7 @@ export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private renderChart() {
     if (!this.data || !this.data.length) return;
-
-    const canvas = document.getElementById(this.chartId) as HTMLCanvasElement;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
+    const ctx = this.canvas.nativeElement.getContext('2d');
     if (!ctx) return;
 
     if (this.chart) this.chart.destroy();
@@ -72,9 +107,7 @@ export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
         maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
-          tooltip: {
-            enabled: true,
-          },
+          tooltip: { enabled: true },
         },
         scales: {
           x: {
