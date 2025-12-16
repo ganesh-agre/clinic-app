@@ -30,7 +30,7 @@ import { BehaviorSubject, combineLatest, map, Observable, tap } from 'rxjs';
     `
       .conversation-list {
         overflow-y: auto;
-        height: 400px;
+        height: 480px;
       }
 
       .conversation-item {

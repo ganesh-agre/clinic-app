@@ -56,7 +56,7 @@ import { ScrollBottomDirective } from '../../../../../shared/directives/app-scro
         display: flex;
         flex-direction: column;
         background: #f9fafb;
-        height: 500px;
+        height: 580px;
       }
 
       .chat-header {
