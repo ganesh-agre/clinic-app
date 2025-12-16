@@ -68,7 +68,7 @@ import { AuthService } from '../core/services/auth.service';
 })
 export class LoginComponent {
   loginForm: NgForm | undefined;
-  model = { username: '', password: '' };
+  model = { username: 'User1', password: 'Welcome1' };
 
   constructor(private authService: AuthService) {}
 
