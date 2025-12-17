@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SidebarComponent } from './components/sidebar.component';
+import { WidgetContainerComponent } from '../widget/widget-container.component';
 @Component({
   selector: 'app-dashboard-layout',
   standalone: true,
-  imports: [RouterModule, SidebarComponent],
+  imports: [RouterModule, SidebarComponent, WidgetContainerComponent],
   template: `<div class="flex min-h-screen">
     <!-- Sidebar (Fixed width) -->
     <app-sidebar class="w-20 bg-gray-800 text-white"></app-sidebar>
@@ -21,6 +22,7 @@ import { SidebarComponent } from './components/sidebar.component';
         <router-outlet></router-outlet>
       </div>
     </div>
+    <app-widget-container />
   </div> `,
   styles: [``],
 })

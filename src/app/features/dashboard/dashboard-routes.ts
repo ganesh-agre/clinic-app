@@ -21,18 +21,14 @@ export const dashboardRoutes: Routes = [
         path: 'appointments',
         loadComponent: () =>
           import('./components/appointments/appointment.component').then(
-            (m) => m.AppointmentComponent
+            (m) => m.AppointmentPageComponent
           ),
       },
-      {
-        path: 'widget',
-        loadComponent: () =>
-          import('./components/widget/widget.component').then((m) => m.WidgetComponent),
-      },
+
       {
         path: 'profile',
         loadComponent: () =>
-          import('./components/profile/profile.component').then((m) => m.ProfileComponent),
+          import('./components/profile/user-profile.component').then((m) => m.UserProfileComponent),
       },
       // Default child route
       { path: '', redirectTo: 'home', pathMatch: 'full' },

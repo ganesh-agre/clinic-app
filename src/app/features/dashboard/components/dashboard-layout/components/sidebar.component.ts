@@ -57,18 +57,18 @@ import { AuthService } from '../../../../../core/services/auth.service';
           </span>
         </div>
 
-        <div class="relative group">
+        <!--<div class="relative group">
           <a [routerLink]="['widget']" class="hover:bg-gray-700 p-2 rounded-md w-full text-center">
             <i class="fas fa-cogs text-white text-xl"></i>
-            <!-- Widget Icon -->
+            <-- Widget Icon --
           </a>
-          <!-- Tooltip for Widget -->
+          <-- Tooltip for Widget --
           <span
             class="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 opacity-0 group-hover:opacity-100 bg-gray-700 text-white text-xs rounded-md py-1 px-2 transition-opacity duration-300"
           >
             Widget
           </span>
-        </div>
+        </div>-->
 
         <div class="relative group">
           <a [routerLink]="['profile']" class="hover:bg-gray-700 p-2 rounded-md w-full text-center">
