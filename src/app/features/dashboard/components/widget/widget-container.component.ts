@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { WidgetService } from './services/widget.service';
 import { WidgetMessagesComponent } from './components/widget-messsages.component';
 import { WidgetInputComponent } from './components/widget-input.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-widget-container',
@@ -64,14 +65,14 @@ import { WidgetInputComponent } from './components/widget-input.component';
 
         <!-- Messages + input wrapper -->
         <div class="flex-1 flex flex-col min-h-0">
-          <!-- Messages (flex-1 for scroll) -->
+          <!-- Messages: ONLY height -->
           <app-widget-messages
-            [messages]="messages"
+            [messages]="messages$ | async"
             (quickReply)="sendQuickReply($event)"
-            class="flex-1 min-h-0 overflow-y-auto"
+            class="flex-1 min-h-0"
           ></app-widget-messages>
 
-          <!-- Input (flex-shrink-0 to stay at bottom) -->
+          <!-- Input -->
           <app-widget-input class="flex-shrink-0" (send)="sendMessage($event)"></app-widget-input>
         </div>
       </div>
@@ -79,13 +80,13 @@ import { WidgetInputComponent } from './components/widget-input.component';
   `,
 })
 export class WidgetContainerComponent {
-  messages: Message[] = [];
+  messages$!: Observable<Message[]>;
   isOpen = false;
 
   constructor(private widgetService: WidgetService) {}
 
   ngOnInit() {
-    this.widgetService.messages$.subscribe((msgs) => (this.messages = msgs));
+    this.messages$ = this.widgetService.messages$;
   }
 
   toggleWidget() {

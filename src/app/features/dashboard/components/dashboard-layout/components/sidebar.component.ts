@@ -13,7 +13,7 @@ import { AuthService } from '../../../../../core/services/auth.service';
         <!-- Sidebar Links (Icons with Tooltip) -->
 
         <div class="relative group">
-          <a [routerLink]="['home']" class="hover:bg-gray-700 p-2 rounded-md w-full text-center">
+          <a [routerLink]="['home']" class="hover:bg-gray-700 p-2 rounded-md w-full text-center ">
             <i class="fas fa-tachometer-alt text-white text-xl"></i>
             <!-- Dashboard Icon -->
           </a>

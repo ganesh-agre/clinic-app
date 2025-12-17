@@ -19,41 +19,53 @@ import { ScrollBottomDirective } from '../../../../../shared/directives/app-scro
   imports: [CommonModule, MessageBubbleComponent, ScrollBottomDirective],
   template: `
     <div
-      class="flex-1 overflow-y-auto p-3 space-y-2"
-      [appScrollBottom]="messages.slice()"
-      #messagesContainer
+      class="h-full overflow-y-auto p-3 space-y-2"
+      [appScrollBottom]="messages"
+      (atBottomChange)="atBottom = $event"
+      #scrollToBottomDirective="appScrollBottom"
     >
       <app-message-bubble
         *ngFor="let msg of messages"
         [message]="msg"
         (quickReplyClicked)="onQuickReply($event)"
       ></app-message-bubble>
+
+      <!-- Scroll to bottom button -->
+      <!-- Scroll to bottom button with tooltip -->
+      <div *ngIf="!atBottom" class="absolute bottom-20 right-4 group z-10">
+        <button
+          class="px-3 py-2
+          bg-emerald-500 hover:bg-emerald-600
+ text-white text-sm rounded-full shadow-lg
+           hover:bg-blue-600 transition cursor-pointer"
+          (click)="scrollToBottomDirective.scrollToBottom()"
+        >
+          ↓
+        </button>
+
+        <!-- Tooltip -->
+        <span
+          class="absolute right-full top-1/2 -translate-y-1/2 mr-2
+           opacity-0 group-hover:opacity-100
+           bg-gray-800 text-white text-xs rounded-md
+           px-2 py-1 whitespace-nowrap
+           transition-opacity duration-200 pointer-events-none"
+        >
+          Scroll to bottom
+        </span>
+      </div>
     </div>
   `,
 })
-export class WidgetMessagesComponent implements AfterViewChecked {
-  @Input() messages: Message[] = [];
+export class WidgetMessagesComponent {
+  @Input() messages: Message[] | null = [];
   @Output() quickReply = new EventEmitter<string>();
 
-  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
+  atBottom = true;
 
   constructor(private ngZone: NgZone) {}
 
-  ngAfterViewChecked() {
-    // Use NgZone + requestAnimationFrame to ensure DOM is updated
-    // this.ngZone.runOutsideAngular(() => {
-    //   requestAnimationFrame(() => this.scrollToBottom());
-    // });
-  }
-
   onQuickReply(reply: string) {
     this.quickReply.emit(reply);
-  }
-
-  private scrollToBottom() {
-    try {
-      this.messagesContainer.nativeElement.scrollTop =
-        this.messagesContainer.nativeElement.scrollHeight;
-    } catch {}
   }
 }
